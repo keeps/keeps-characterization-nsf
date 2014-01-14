@@ -1,12 +1,15 @@
 package pt.keep.validator;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import lotus.notes.Database;
 import lotus.notes.Document;
+import lotus.notes.DocumentCollection;
 import lotus.notes.NotesException;
 import lotus.notes.NotesThread;
 import lotus.notes.Session;
@@ -51,6 +54,7 @@ public class NsfCharacterizationTool {
 			NotesThread.sinitThread();
 			Session s = Session.newInstance();
 			Database db = s.getDatabase("",f.getPath());
+			
 			if(db==null){
 				ValidationInfo val = new ValidationInfo();
 				val.setValid(false);
@@ -59,11 +63,15 @@ public class NsfCharacterizationTool {
 				ValidationInfo val = new ValidationInfo();
 				val.setValid(db.isOpen()?true:false);
 				res.setValidationInfo(val);
-				db.getViews();
+				Map<String,String> features = new HashMap<String,String>();
+				features.put("created", db.getCreated().toString());
+				features.put("documentCount", ""+db.getAllDocuments().getCount());
+				features.put("percentUsed", ""+db.getPercentUsed());
+				features.put("size", ""+db.getSize());
+				features.put("sizeQuota", ""+db.getSizeQuota());
+				features.put("categories", ""+db.getCategories());
+				res.setFeatures(features);
 			}
-			//String data = extractData(db);
-			//res.setData(data);
-			
 		}catch (Exception e) { 
 			ValidationInfo val = new ValidationInfo();
 			val.setValid(true);
@@ -115,6 +123,10 @@ public class NsfCharacterizationTool {
 	private void printVersion() {
 		System.out.println(version);
 	}
+	
+	
+	
+	
 	
 	public static void main(String[] args) {
 		try {

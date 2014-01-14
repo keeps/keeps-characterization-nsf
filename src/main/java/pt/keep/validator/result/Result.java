@@ -1,27 +1,33 @@
 package pt.keep.validator.result;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import pt.keep.validator.utils.jaxb.MapAdapter;
 
 @XmlRootElement(name = "nsfCharacterizationResult")
-@XmlType(propOrder = { "validationInfo","data"})
+@XmlType(propOrder = {"features", "validationInfo"})
 public class Result {
 
-	private String data;
+  private int allDocumentsCount;
+	
 	private ValidationInfo validationInfo;
 	
+	 private Map<String,String> features;
+	  @XmlElement
+	  @XmlJavaTypeAdapter(MapAdapter.class)
+	  public Map<String, String> getFeatures() {
+	      return features;
+	  }
+	  public void setFeatures(Map<String, String> features) {
+	      this.features = features;
+	  }
+	  
 	
-
-	
-	@XmlElement(required=false)
-	public String getData() {
-		return data;
-	}
-
-	public void setData(String data) {
-		this.data = data;
-	}
 
 	@XmlElement(required=true)
 	public ValidationInfo getValidationInfo() {
