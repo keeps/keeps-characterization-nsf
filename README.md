@@ -32,6 +32,36 @@ usage: java -jar [jarFile]
 ```bash
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <nsfCharacterizationResult>
+    <features>
+        <item>
+            <key>size</key>
+            <value>2.251803305930516E15</value>
+        </item>
+        <item>
+            <key>percentUsed</key>
+            <value>91.2</value>
+        </item>
+        <item>
+            <key>documentCount</key>
+            <value>1</value>
+        </item>
+        <item>
+            <key>sizeQuota</key>
+            <value>0</value>
+        </item>
+        <item>
+            <key>created</key>
+            <value>10/14/2013 06:24:12 PM GDT</value>
+        </item>
+        <item>
+            <key>categories</key>
+            <value></value>
+        </item>
+        <item>
+            <key>views</key>
+            <value>($Subscriptions) ; Subscriptions ; ($FA0F04057:3C58A4BB-N852566AB:0077885A)</value>
+        </item>
+    </features>
     <validationInfo>
         <valid>true</valid>
     </validationInfo>
