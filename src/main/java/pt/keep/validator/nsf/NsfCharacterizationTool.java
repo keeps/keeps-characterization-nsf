@@ -1,4 +1,4 @@
-package pt.keep.validator;
+package pt.keep.validator.nsf;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
@@ -21,9 +21,10 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang.StringEscapeUtils;
 
-import pt.keep.validator.result.Result;
-import pt.keep.validator.result.ValidationInfo;
+import pt.keep.validator.nsf.result.Result;
+import pt.keep.validator.nsf.result.ValidationInfo;
 
 
 public class NsfCharacterizationTool {
@@ -42,7 +43,7 @@ public class NsfCharacterizationTool {
 			jaxbMarshaller.marshal(res, bos);
 			return bos.toString("UTF-8");
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return null;
 	}
@@ -54,7 +55,6 @@ public class NsfCharacterizationTool {
 			NotesThread.sinitThread();
 			Session s = Session.newInstance();
 			Database db = s.getDatabase("",f.getPath());
-			
 			if(db==null){
 				ValidationInfo val = new ValidationInfo();
 				val.setValid(false);
@@ -64,12 +64,35 @@ public class NsfCharacterizationTool {
 				val.setValid(db.isOpen()?true:false);
 				res.setValidationInfo(val);
 				Map<String,String> features = new HashMap<String,String>();
-				features.put("created", db.getCreated().toString());
+				features.put("created", StringEscapeUtils.escapeXml(db.getCreated().toString()));
 				features.put("documentCount", ""+db.getAllDocuments().getCount());
 				features.put("percentUsed", ""+db.getPercentUsed());
 				features.put("size", ""+db.getSize());
 				features.put("sizeQuota", ""+db.getSizeQuota());
-				features.put("categories", ""+db.getCategories());
+				features.put("categories", StringEscapeUtils.escapeXml(db.getCategories()));
+				
+				if(db.getViews()!=null){
+				  String views = "";
+				  for(Object o : db.getViews()){
+				    View v = (View)o;
+				    System.out.println("View:"+v.getName());
+				    System.out.println(v.getColumns());
+				    if(v.getFirstDocument()!=null){
+				      Document d = v.getFirstDocument();
+				      while(v!=null){
+				        System.out.println(d.getColumnValues());
+				        System.out.println(d.getAuthors());
+				        System.out.println(d.getSize());
+				        d = v.getNextDocument(d);
+				      }
+				      
+				    }
+				    System.out.println(v.getFirstDocument().getCreated());
+				    views+=v.getName() + " ; ";
+				  }
+				  views = views.substring(0,views.length()-3);
+				  features.put("views", StringEscapeUtils.escapeXml(views));
+				}
 				res.setFeatures(features);
 			}
 		}catch (Exception e) { 
